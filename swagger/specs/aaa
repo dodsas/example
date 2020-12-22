@@ -1,0 +1,137 @@
+openapi: 3.0.2
+info:
+  version: "1.0.0"
+  title: WORK
+  description: |
+    WORK
+servers:
+  - url: http://localhost:8080
+
+paths:
+
+  /auth:
+    post:
+      tags:
+        - 인증
+      summary: API 사용을 위한 인증 진행
+      operationId: postAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostAuthReqDto'
+      responses:
+        '200':
+          description: 성공
+        '400':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+
+  /develop/query/run:
+    post:
+      tags:
+        - 개발도구
+      summary: 쿼리실행
+      operationId: postDevelopQuery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDevelopQueryReqDto'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDevelopQueryRespDto'
+        '400':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+
+  /develop/query/update:
+    post:
+      tags:
+        - 개발도구
+      summary: 업데이트
+      operationId: postDevelopQueryUpdate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDevelopQueryReqDto'
+      responses:
+        '200':
+          description: 성공
+        '400':
+          description: 실패
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDto'
+
+components:
+  schemas:
+    ErrorResponseDto:
+      type: object
+      required:
+        - returnCode
+        - returnMessage
+      properties:
+        returnCode:
+          type: string
+          description: 에러 코드
+        returnMessage:
+          type: string
+          description: 에러 상세 메세지
+
+    PostAuthReqDto:
+      type: object
+      required:
+        - mode
+      properties:
+        mode:
+          type: string
+          enum: ["na", "de"]
+          description: MODE
+
+    PostDevelopQueryReqDto:
+      type: object
+      required:
+        - queryString
+      properties:
+        queryString:
+          type: string
+          description: 쿼리
+
+    PostDevelopQueryRespDto:
+      type: string
+
+    PostRunQueryRespDto:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: 쿼리 성공 여부
+        result:
+          type: string
+          description: 쿼리 결과 (success true 인 경우 성공결과, false 인 경우 실패결과)
+
+
+  parameters:
+    PathQueryId:
+      required: true
+      in: path
+      name: queryId
+      description: 쿼리아이디
+      schema:
+        type: string
