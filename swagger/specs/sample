@@ -1,0 +1,1374 @@
+swagger: '2.0'
+info:
+  description: Local Order Platform
+  version: 1.0.0
+  title: Local Order Platform
+  termsOfService: http://10.30.31.121:10280/lop
+  contact:
+    email: ysnam@konai.com
+host: lop.konadc.com:10280
+basePath: /lop
+
+tags:
+  - name : menu
+    description: 가맹점 배달 매뉴
+  - name : payment
+    description: 배달 주문 결제
+
+schemes:
+  - http
+
+paths:
+  # /category/list:
+  #   post:
+  #     tags:
+  #     - category
+  #     summary: 배달 가맹점 카테고리 리스트 등록
+  #     operationId: addCategoryList
+  #     consumes:
+  #     - application/json
+  #     parameters:
+  #     - in: body
+  #       name: body
+  #       required: true
+  #       schema:
+  #         $ref: '#/definitions/CategoryGetListDto'
+  #     responses:
+  #       200:
+  #         description: 성공
+  #       400:
+  #         description: 실패
+  #         schema:
+  #           $ref: '#/definitions/ErrorResponseDto'
+
+  # /category:
+  #   post:
+  #     tags:
+  #     - category
+  #     summary: 배달 가맹점 카테고리 등록
+  #     operationId: addCategory
+  #     consumes:
+  #     - application/json
+  #     parameters:
+  #     - in: body
+  #       name: body
+  #       required: true
+  #       schema:
+  #         $ref: '#/definitions/CategoryGetDto'
+  #     responses:
+  #       200:
+  #         description: 성공
+  #       400:
+  #         description: 실패
+  #         schema:
+  #           $ref: '#/definitions/ErrorResponseDto'
+
+  # /category/{code}:
+  #   get:
+  #     tags:
+  #     - category
+  #     summary: 배달 가맹점 카테고리 확인
+  #     operationId: getCategory
+  #     produces:
+  #     - application/json
+  #     parameters:
+  #     - in: path
+  #       name: code
+  #       description: 카테고리 코드
+  #       required: true
+  #       type: string
+  #     responses:
+  #       200:
+  #         description: 성공
+  #         schema:
+  #           $ref: '#/definitions/CategoryGetDto'
+  #       400:
+  #         description: 실패
+  #         schema:
+  #           $ref: '#/definitions/ErrorResponseDto'
+  #   put:
+  #     tags:
+  #     - category
+  #     summary: 배달 가맹점 카테고리 수정
+  #     operationId: putCategory
+  #     consumes:
+  #     - application/json
+  #     parameters:
+  #     - in: path
+  #       name: code
+  #       description: 카테고리 코드
+  #       required: true
+  #       type: string
+  #     - in: body
+  #       name: body
+  #       required: true
+  #       schema:
+  #         $ref: '#/definitions/CategoryDto'
+  #     responses:
+  #       200:
+  #         description: 성공
+  #       400:
+  #         description: 실패
+  #         schema:
+  #           $ref: '#/definitions/ErrorResponseDto'
+
+  /place/simple/list:
+    get:
+      tags:
+        - place
+      summary: 배달 Place 리스트 읽기 (id DESC 정렬)
+      operationId: getPlaceSimpleList
+      parameters:
+        - in: query
+          name: bizNo
+          description: 사업자번호
+          required: true
+          type: string
+        - in: query
+          name: name
+          description: 매장명 (like 검색 가능)
+          type: string
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/rowSize'
+      responses:
+        200:
+          description: 성공
+          headers:
+            X-Pagination-TotalPages:
+              type: integer
+            X-Pagination-CurrentPage:
+              type: integer
+            X-Pagination-TotalCount:
+              type: integer
+            X-Pagination-Offset:
+              type: integer
+            X-Pagination-Limit:
+              type: integer
+          schema:
+            $ref: '#/definitions/PlaceSimpleGetListDto'
+        400:
+          description: |
+            실패
+            82_1002_001 : 카테고리 없음
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /place/list:
+    post:
+      tags:
+        - place
+      summary: 배달 Place 리스트 등록
+      operationId: addPlaceList
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/PlaceListDto'
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/PlaceGetListDto'
+        400:
+          description: |
+            실패
+            82_1002_001 : 카테고리 없음
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /place:
+    post:
+      tags:
+        - place
+      summary: 배달 Place 등록
+      operationId: addPlace
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/PlaceDto'
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/PlaceGetDto'
+        400:
+          description: |
+            실패
+          #   82_1002_001 : 카테고리 없음
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /place/{id}:
+    get:
+      tags:
+        - place
+      summary: 배달 Place 확인
+      operationId: getPlace
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: 배달 Place ID
+          required: true
+          type: string
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/PlaceGetDto'
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+    put:
+      tags:
+        - place
+      summary: 배달 가맹점 수정
+      operationId: putPlace
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: 배달 Place ID
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/PlaceDto'
+      responses:
+        200:
+          description: 성공
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /place/{id}/menu:
+    get:
+      tags:
+        - menu
+      summary: 배달 매뉴 리스트 확인
+      operationId: getMenuList
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: 배달 Place ID
+          required: true
+          type: string
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/MenuGetListDto'
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /menu/list:
+    post:
+      tags:
+        - menu
+      summary: 배달 매뉴 리스트 등록
+      operationId: addMenuList
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/MenuListDto'
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/MenuGetListDto'
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /menu:
+    post:
+      tags:
+        - menu
+      summary: 배달 매뉴 등록
+      operationId: addMenu
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/MenuDto'
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/MenuGetDto'
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /menu/{id}:
+    put:
+      tags:
+        - menu
+      summary: 배달 매뉴 업데이트
+      operationId: putMenu
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: 매뉴 ID
+          required: true
+          type: string
+        - in: body
+          name: menu
+          required: true
+          schema:
+            $ref: '#/definitions/MenuDto'
+      responses:
+        200:
+          description: 성공
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+    get:
+      tags:
+        - menu
+      summary: 배달 매뉴 가져오기
+      operationId: getMenu
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: 매뉴 ID
+          required: true
+          type: string
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/MenuGetDto'
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /history/{orderId}:
+    get:
+      tags:
+        - history
+      summary: 배달 주문내역 조회
+      operationId: getOrderByOrderId
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: orderId
+          description: 주문번호
+          required: true
+          type: string
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/OrderHistoryGetDto'
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /history/order/simple/list:
+    get:
+      tags:
+        - history
+      summary: 배달 주문내역 리스트 조회 (주문시간 ASC 정렬)
+      operationId: getOrderSimpleList
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: status
+          description: 주문상태
+          type: string
+          enum: [CANCEL, WAIT, OK, FAIL]
+          required: true
+        - in: query
+          name: placeId
+          description: PlaceId
+          type: string
+          required: true
+        - in: query
+          name: orderId
+          description: 주문번호
+          type: string
+        - in: query
+          name: mobileNumber
+          description: 모바일번호
+          type: string
+        - $ref: '#/parameters/page'
+        - $ref: '#/parameters/rowSize'
+      responses:
+        200:
+          description: 성공
+          headers:
+            X-Pagination-TotalPages:
+              type: integer
+            X-Pagination-CurrentPage:
+              type: integer
+            X-Pagination-TotalCount:
+              type: integer
+            X-Pagination-Offset:
+              type: integer
+            X-Pagination-Limit:
+              type: integer
+          schema:
+            $ref: '#/definitions/OrderHistorySimpleListDto'
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /payment:
+    post:
+      tags:
+        - payment
+      summary: 배달 주문 결제요청
+      operationId: postPayment
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/PaymentDto'
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/PaymentRespDto'
+        400:
+          description: |
+            실패
+            82_1001_001 : 잘못된 데이터
+            82_1001_002 : 금액오류
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+  /payment/{orderId}/cancel:
+    post:
+      tags:
+        - payment
+      summary: 배달 주문 결제취소 요청 - 월랫용
+      operationId: postPaymentCancel
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: 주문번호
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/PaymentCancelDto'
+      responses:
+        200:
+          description: 성공
+        400:
+          description: |
+            실패
+            82_1001_001 : 잘못된 데이터
+            82_1001_002 : 금액오류
+            82_1002_002 : 유효하지 않은 주문번호
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+  /payment/{orderId}/system-cancel:
+    post:
+      tags:
+        - payment
+      summary: 배달 주문 시스템 결제취소 요청 - 포탈용
+      operationId: postPaymentSystemCancel
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: orderId
+          type: string
+          required: true
+          description: 주문번호
+      responses:
+        200:
+          description: 성공
+        400:
+          description: |
+            실패
+            82_1001_001 : 잘못된 데이터
+            82_1002_002 : 유효하지 않은 주문번호
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /orderer:
+    post:
+      tags:
+        - orderer
+      summary: 배달 주문자 정보 저장
+      operationId: postOrderer
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrdererGetDto'
+      responses:
+        200:
+          description: 성공
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+  /orderer/{userId}:
+    get:
+      tags:
+        - orderer
+      summary: 배달 주문자 정보 가져오기
+      operationId: getOrderer
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          description: 유저아이디
+          required: true
+          type: string
+      responses:
+        200:
+          description: 성공
+          schema:
+            $ref: '#/definitions/OrdererGetDto'
+
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+    put:
+      tags:
+        - orderer
+      summary: 배달 주문자 정보 업데이트
+      operationId: putOrderer
+      consumes:
+        - application/json
+      parameters:
+        - in: path
+          name: userId
+          description: 유저아이디
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/OrdererDto'
+      responses:
+        200:
+          description: 성공
+        400:
+          description: 실패
+          schema:
+            $ref: '#/definitions/ErrorResponseDto'
+
+definitions:
+  MenuGetListDto:
+    required:
+      - menuList
+    type: object
+    properties:
+      menuList:
+        type: array
+        items:
+          $ref: '#/definitions/MenuGetDto'
+
+  MenuListDto:
+    required:
+      - menuList
+    type: object
+    properties:
+      menuList:
+        type: array
+        items:
+          $ref: '#/definitions/MenuDto'
+
+  MenuDto:
+    required:
+      - placeId
+      - merchantId
+      - name
+      - menuSubItemList
+      - groupName
+    type: object
+    properties:
+      placeId:
+        type: string
+        description: 배달 Place ID
+      merchantId:
+        description: 직가맹ID
+        type: string
+      imageUrl:
+        type: string
+        description: 이미지 URL
+      groupName:
+        type: string
+        description: 그룹명 (ex 맛있는 피자 그룹)
+      name:
+        type: string
+        description: 매뉴명 (ex 페퍼로니피자)
+      mainMenu:
+        type: boolean
+        description: 대표 매뉴 여부 (여러개의 메인 매뉴 존재 가능)
+        default: false
+      mainPriority:
+        type: number
+        description: 대표 매뉴 우선순위 (동일 값 존재 가능)
+        default: 0
+      description:
+        type: string
+        description: 매뉴 설명
+      soldOut:
+        type: boolean
+        description: 품절 여부
+        default: false
+      show:
+        type: boolean
+        description: 매뉴 노출 여부
+        default: true
+      menuSubItemList:
+        type: array
+        description: 서브매뉴 리스트, 기본선택을 포함한 최소 하나의 리스트 필요
+        items:
+          $ref: '#/definitions/MenuSubItemDto'
+      menuOptionList:
+        type: array
+        description: 옵션매뉴 리스트
+        items:
+          $ref: '#/definitions/MenuOptionDto'
+
+  MenuGetDto:
+    allOf:
+      - $ref: '#/definitions/MenuDto'
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            description: menu id
+            type: string
+          menuSubItemList:
+            type: array
+            description: 서브매뉴 리스트, 기본선택을 포함한 최소 하나의 리스트 필요
+            items:
+              $ref: '#/definitions/MenuSubItemGetDto'
+          menuOptionList:
+            type: array
+            description: 옵션매뉴 리스트
+            items:
+              $ref: '#/definitions/MenuOptionGetDto'
+
+  MenuSubItemDto:
+    type: object
+    required:
+      - name
+      - price
+    properties:
+      name:
+        type: string
+        description: 서브매뉴명 (ex 레귤러R)
+      price:
+        type: integer
+        format: int64
+        description: 가격
+      defaultSelect:
+        type: boolean
+        description: 기본선택 (서브매뉴 중 하나라도 선택되지 않거나 다중선택시 에러 발생,)
+        default: false
+      soldOut:
+        type: boolean
+        description: 품절여부
+        default: false
+
+  MenuSubItemGetDto:
+    allOf:
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: string
+            description: 서브매뉴 ID
+      - $ref: '#/definitions/MenuSubItemDto'
+
+  MenuOptionGetDto:
+    allOf:
+      - $ref: '#/definitions/MenuOptionDto'
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: string
+            description: 매뉴옵션 ID
+          menuOptionItemList:
+            type: array
+            items:
+              $ref: '#/definitions/MenuOptionItemGetDto'
+
+  MenuOptionDto:
+    type: object
+    required:
+      - name
+      - menuOptionItemList
+    properties:
+      name:
+        type: string
+        description: 대표옵션명 (ex 도우선택)
+      selectCount:
+        type: number
+        description: 최대 선택 가능 개수 (0 무제한)
+        default: 0
+      soldOut:
+        type: boolean
+        description: 품절여부
+        default: false
+      priority:
+        type: number
+        description: 우선순위
+        default: 0
+      menuOptionItemList:
+        type: array
+        items:
+          $ref: '#/definitions/MenuOptionItemDto'
+
+  CategoryGetListDto:
+    type: object
+    required:
+      - categoryList
+    properties:
+      categoryList:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryGetDto'
+
+  CategoryGetDto:
+    type: object
+    required:
+      - code
+      - name
+    properties:
+      code:
+        type: string
+        description: 카테고리 코드
+      name:
+        type: string
+        description: 카테고리 명
+
+  CategoryDto:
+    type: object
+    required:
+      - code
+      - name
+    properties:
+      name:
+        type: string
+        description: 카테고리 명
+
+  MenuOptionItemGetDto:
+    allOf:
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: string
+            description: 매뉴옵션 아이디
+      - $ref: '#/definitions/MenuOptionItemDto'
+
+  MenuOptionItemDto:
+    type: object
+    required:
+      - name
+      - price
+    properties:
+      name:
+        type: string
+        description: 옵션명 (치즈크러스트추가)
+      price:
+        type: integer
+        format: int64
+        description: 가격
+      defaultSelect:
+        type: boolean
+        description: 기본선택
+        default: false
+      priority:
+        type: number
+        description: 우선순위
+        default: 0
+      soldOut:
+        type: boolean
+        description: 품절여부
+        default: false
+
+  PlaceListDto:
+    type: object
+    required:
+      - placeList
+    properties:
+      placeList:
+        type: array
+        items:
+          $ref: '#/definitions/PlaceDto'
+
+  PlaceGetListDto:
+    type: object
+    required:
+      - placeList
+    properties:
+      placeList:
+        type: array
+        items:
+          $ref: '#/definitions/PlaceGetDto'
+
+  PlaceGetDto:
+    allOf:
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: string
+            description: 배달 Place ID
+      - $ref: '#/definitions/PlaceDto'
+
+  PlaceSimpleGetListDto:
+    type: object
+    required:
+      - placeSimpleList
+    properties:
+      placeSimpleList:
+        type: array
+        items:
+          $ref: '#/definitions/PlaceSimpleGetDto'
+
+  PlaceSimpleGetDto:
+    allOf:
+      - type: object
+        required:
+          - id
+        properties:
+          id:
+            type: string
+            description: 플레이스ID
+      - $ref: '#/definitions/PlaceSimpleDto'
+
+  PlaceSimpleDto:
+    type: object
+    required:
+      - name
+      - addr
+      - aspId
+      - telephoneNumber
+      - smsNumberList
+      - kaId
+      - addrDetail
+      - zipCode
+      - categoryCode
+      - merchantId
+      - bizNo
+      - bizTypeName
+      - orderableTimeList
+    properties:
+      merchantId:
+        type: string
+        description: 직가맹ID
+      tipAmount:
+        type: number
+        description: 배달팁 금액
+        default: 0
+      minAmount:
+        type: number
+        description: 최소배달 금액
+        default: 0
+      name:
+        type: string
+        description: 상호명
+      open:
+        type: boolean
+        description: 영업중
+        default: false
+      addr:
+        type: string
+        description: 주소
+      addrDetail:
+        type: string
+        description: 주소 상세
+      zipCode:
+        type: string
+        description: 우편번호
+      telephoneNumber:
+        type: string
+        description: 대표 전화번호
+      kaId:
+        type: string
+        description: KA 아이디
+      aspId:
+        type: string
+        description: ASP ID
+      categoryCode:
+        type: string
+        description: 카테고리 코드 (등록되어 있지 않으면 에러 발생)
+      bizNo:
+        type: string
+        description: 사업자 번호
+      bizTypeName:
+        type: string
+        description: 업종명(ex 일반음식점 등)
+
+  PlaceDto:
+    allOf:
+      - $ref: '#/definitions/PlaceSimpleDto'
+      - type: object
+        required:
+          - smsNumberList
+          - orderableTimeList
+        properties:
+          smsNumberList:
+            type: array
+            items:
+              $ref: '#/definitions/SmsNumberDto'
+            description: SMS 알람용 번호 리스트
+          holidayMemo:
+            type: string
+            description: 휴무일 메모
+          holidayList:
+            type: array
+            description: 정기휴무일 리스트
+            items:
+              type: string
+              description: 휴무일
+              enum: [MON, TUE, WED, THU, FRI, SAT, SUN]
+          orderableTimeList:
+            type: array
+            description: 주문가능시간 리스트
+            items:
+              type: string
+              description: HH:mm ~ HH:mm
+          orderableTimeMemo:
+            type: string
+            description: 주문가능시간 안내문구
+          deliveryMemo:
+            type: string
+            description: 배달지역 안내문구
+          simpleIntro:
+            type: string
+            description: 가맹점 한줄 소개
+          timeDataList:
+            type: array
+            description: 운영시간/운영준비시간
+            items:
+              $ref: '#/definitions/PlaceTimeData'
+          imageList:
+            type: array
+            description: 이미지 리스트
+            items:
+              $ref: '#/definitions/PlaceImage'
+          introList:
+            type: array
+            description: 소개 리스트
+            items:
+              $ref: '#/definitions/PlaceIntroDto'
+          convenienceList:
+            type: array
+            description: 편의시설 리스트
+            items:
+              type: string
+              description: 편의시설 명
+          tagList:
+            type: array
+            description: 해시테그 리스트
+            items:
+              type: string
+              description: TAG
+
+  PlaceImage:
+    type: object
+    required:
+      - url
+      - order
+    properties:
+      url:
+        type: string
+        description: 이미지 URL
+      imageOrder:
+        type: number
+        description: 이미지 순서
+
+  PlaceTimeData:
+    type: object
+    required:
+      - name
+      - time
+    properties:
+      name:
+        type: string
+        enum: [OPERATION, PREPARATION]
+        description: 시간 분류명
+      time:
+        type: string
+        description: 시간
+      memo:
+        type: string
+        description: 메모
+
+  PlaceIntroDto:
+    type: object
+    required:
+      - title
+      - content
+    properties:
+      title:
+        type: string
+        description: 소개 타이틀
+      content:
+        type: string
+        description: 소개 내용
+
+  SmsNumberDto:
+    type: object
+    required:
+      - name
+      - smsNumber
+    properties:
+      name:
+        type: string
+        description: 번호명
+      smsNumber:
+        type: string
+        description: 번호
+
+  PaymentDto:
+    type: object
+    required:
+      - txData
+      - amount
+      - tipAmount
+      - placeId
+      - orderer
+      - menuHistoryList
+    properties:
+      txData:
+        type: string
+        description: txData(de2, de4, de14, de23, de35, de48, de55)
+      amount:
+        type: integer
+        format: int64
+        description: 결제 금액 (배달팁 포함된 금액)
+      tipAmount:
+        type: integer
+        format: int64
+        description: 배달팁 금액
+      placeId:
+        description: 배달 Place ID
+        type: string
+      memo:
+        description: 메모(요구사항)
+        type: string
+      orderer:
+        $ref: '#/definitions/OrdererGetDto'
+      menuHistoryList:
+        type: array
+        items:
+          $ref: '#/definitions/MenuHistoryDto'
+
+  PaymentRespDto:
+    type: object
+    properties:
+      orderId:
+        description: 주문번호
+        type: string
+  PaymentCancelDto:
+    type: object
+    required:
+      - txData
+      - amount
+      - tipAmount
+      - orderId
+    properties:
+      txData:
+        type: string
+        description: txData(de2, de4, de14, de23, de35, de48, de55)
+
+  OrderHistorySimpleListDto:
+    type: object
+    required:
+      - orderHistorySimpleList
+    properties:
+      orderSimpleList:
+        type: array
+        items:
+          $ref: '#/definitions/OrderHistorySimpleDto'
+
+  OrderHistorySimpleDto:
+    type: object
+    required:
+      - placeId
+      - id
+      - printName
+      - orderId
+      - merchantId
+      - placeName
+      - orderDateTime
+      - statusDetails
+      - status
+      - orderer
+    properties:
+      placeId:
+        type: string
+        description: 배달 Place Id
+      id:
+        type: string
+        description: 주문번호
+      placeName:
+        type: string
+        description: 배달 매장명
+      merchantId:
+        type: string
+        description: 직가맹점ID
+      orderDateTime:
+        type: string
+        description: 주문시간 (yyyy/MM/dd HH24:mm)
+      printName:
+        type: string
+        description: 대표 노출 명 (까르보나라 피자 외 3종 등)
+      statusDetails:
+        type: string
+        enum: [CANCEL_WALLET, CANCEL_MANUAL, CANCEL_AUTO, WAIT, OK]
+      status:
+        type: string
+        enum: [CANCEL, WAIT, OK, FAIL]
+      memo:
+        type: string
+        description: 메모(요청사항)
+      orderer:
+        $ref: '#/definitions/OrdererGetDto'
+
+  OrderHistoryGetDto:
+    allOf:
+      - $ref: '#/definitions/OrderHistorySimpleDto'
+      - type: object
+        required:
+          - payment
+          - menuHistoryList
+        properties:
+          payment:
+            $ref: '#/definitions/PaymentHistoryDto'
+          menuHistoryList:
+            type: array
+            items:
+              $ref: '#/definitions/MenuHistoryDto'
+
+  OrdererGetDto:
+    allOf:
+      - type: object
+        required:
+          - userId
+        properties:
+          userId:
+            type: string
+            description: 유저 아이디
+      - $ref: '#/definitions/OrdererDto'
+
+  OrdererDto:
+    type: object
+    required:
+      - addr
+      - addrDetail
+      - zipCode
+      - mobileNumber
+      - par
+    properties:
+      addr:
+        type: string
+        description: 주문자 주소
+      addrDetail:
+        type: string
+        description: 주문자 주소 상세
+      zipCode:
+        type: string
+        description: 주문자 우편번호
+      mobileNumber:
+        type: string
+        description: 주문자 전화번호
+      par:
+        description: 마지막 사용한 카드의 PAR
+        type: string
+
+  PaymentHistoryDto:
+    type: object
+    required:
+      - orgAmount
+      - tipAmount
+    properties:
+      orgAmount:
+        type: number
+        description: 총 결제금액
+      tipAmount:
+        type: number
+        description: 배달 팁
+
+  MenuHistoryDto:
+    required:
+      - merchantId
+      - menuId
+      - name
+      - menuHistorySubItemList
+      - groupName
+    type: object
+    properties:
+      menuId:
+        description: 매뉴ID
+        type: string
+      groupName:
+        type: string
+        description: 그룹명 (ex 맛있는 피자 그룹)
+      name:
+        type: string
+        description: 매뉴명 (ex 페퍼로니피자)
+      menuHistorySubItemList:
+        type: array
+        description: 서브매뉴 리스트
+        items:
+          $ref: '#/definitions/MenuHistorySubItemDto'
+      menuHistoryOptionList:
+        type: array
+        description: 옵션매뉴 리스트
+        items:
+          $ref: '#/definitions/MenuHistoryOptionDto'
+      count:
+        type: integer
+        description: 매뉴 수량 (서브/옵션 포함된 전체)
+        default: 1
+
+  MenuHistorySubItemDto:
+    type: object
+    required:
+      - name
+      - price
+      - menuSubItemId
+    properties:
+      menuSubItemId:
+        type: string
+        description: 서브매뉴ID
+      name:
+        type: string
+        description: 서브매뉴명 (ex 레귤러R)
+      price:
+        type: string
+        description: 단일 가격
+      count:
+        type: integer
+        description: 서브매뉴 수량
+        default: 1
+
+  MenuHistoryOptionDto:
+    type: object
+    required:
+      - menuOptionId
+      - name
+      - menuHistoryOptionItemList
+    properties:
+      menuOptionId:
+        type: string
+        description: 대표옵션ID
+      name:
+        type: string
+        description: 대표옵션명 (ex 도우선택)
+      menuHistoryOptionItemList:
+        type: array
+        items:
+          $ref: '#/definitions/MenuHistoryOptionItemDto'
+
+  MenuHistoryOptionItemDto:
+    type: object
+    required:
+      - menuOptionItemId
+      - name
+      - price
+    properties:
+      menuOptionItemId:
+        type: string
+        description: 옵션ID
+      name:
+        type: string
+        description: 옵션명 (치즈크러스트추가)
+      price:
+        type: integer
+        format: int64
+        description: 단일가격
+      count:
+        type: integer
+        description: 옵션 수량
+        default: 1
+
+  ErrorResponseDto:
+    type: object
+    properties:
+      returnCode:
+        type: string
+        description: 에러 코드 정의 (link 에러코드 정의서 위치)
+      returnMessage:
+        type: string
+        description: 에러 메세지
+
+parameters:
+  page:
+    name: page
+    in: query
+    description: 페이지 번호 (1부터 시작)
+    type: integer
+    default: 1
+  rowSize:
+    name: rowSize
+    in: query
+    description: 페이지 사이즈
+    type: integer
+    default: 10
